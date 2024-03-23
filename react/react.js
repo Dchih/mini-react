@@ -4,8 +4,8 @@ export function createTextNode(text) {
     props: {
       // nodeValue 不是随便取名！！！
       nodeValue: text,
-      children: [],
     },
+    children: [],
   };
 }
 
@@ -14,9 +14,9 @@ export function createElement(type, props, ...children) {
     type,
     props: {
       ...props,
-      children: children.map((child) => {
-        return typeof child === "string" ? createTextNode(child) : child;
-      }),
     },
+    children: children.map((child) => {
+      return typeof child === "string" ? createTextNode(child) : child;
+    }),
   };
 }

@@ -5,12 +5,12 @@ function render(el, container) {
       : document.createElement(el.type);
 
   Object.keys(el.props).forEach((key) => {
-    if (key !== "children") {
-      dom[key] = el.props[key];
-    }
+    // if (key !== "children") {
+    dom[key] = el.props[key];
+    // }
   });
 
-  el.props.children.forEach((child) => {
+  el.children.forEach((child) => {
     render(child, container);
   });
 
