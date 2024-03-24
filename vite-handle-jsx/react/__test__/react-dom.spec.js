@@ -1,5 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import React from "../react";
+
+beforeAll(() => {
+  vi.useFakeTimers({ toFake: ["requestIdleCallback"] });
+});
+
 describe("should create vdom", () => {
   it("<div>hi</div>", () => {
     const el = React.createElement("div", null, "hi");

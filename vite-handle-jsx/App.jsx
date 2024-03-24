@@ -1,4 +1,7 @@
-import { createElement } from "./react/react.js";
+// js pragam
+/**@jsx CReact.createElement */
+
+import CReact from "./react/react.js";
 
 function appWithJsx() {
   return (
@@ -10,4 +13,6 @@ function appWithJsx() {
 
 console.log(appWithJsx);
 
-export const el = createElement("div", { id: "app" }, "app");
+export const el = CReact.createElement("div", { id: "app" }, "app");
+
+export const App = <div>hi-mini-react</div>;
