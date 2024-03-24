@@ -10,7 +10,7 @@ function render(el, container) {
     }
   });
 
-  el.children.forEach((child) => {
+  el.props.children.forEach((child) => {
     render(child, container);
   });
 
