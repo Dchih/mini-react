@@ -21,3 +21,8 @@ export function createElement(type, props, ...children) {
     },
   };
 }
+
+export default {
+  createElement,
+  createTextNode,
+};
