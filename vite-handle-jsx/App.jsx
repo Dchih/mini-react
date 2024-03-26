@@ -3,16 +3,20 @@
 
 import CReact from "./react/react.js";
 
-function appWithJsx() {
-  return (
-    <div>
-      hi-mini-react<div>!</div>
-    </div>
-  );
+function Wrapper() {
+  return <AppWithJsx></AppWithJsx>;
 }
 
-console.log(appWithJsx);
+function AppWithJsx({ num }) {
+  return <div>AppWithJsx: {num}</div>;
+}
 
-export const el = CReact.createElement("div", { id: "app" }, "app");
+// export const el = CReact.createElement("div", { id: "app" }, "app");
 
-export const App = <div>hi-mini-react</div>;
+export const App = (
+  <div>
+    hi-mini-react
+    <AppWithJsx num={10}></AppWithJsx>
+    <AppWithJsx num={10}></AppWithJsx>
+  </div>
+);

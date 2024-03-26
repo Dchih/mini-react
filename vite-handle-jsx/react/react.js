@@ -16,7 +16,9 @@ function createElement(type, props, ...children) {
       ...props,
       // react props 可以取到 children
       children: children.map((child) => {
-        return typeof child === "string" ? createTextNode(child) : child;
+        return typeof child === "string" || typeof child === "number"
+          ? createTextNode(child)
+          : child;
       }),
     },
   };
@@ -29,22 +31,75 @@ function render(el, container) {
       children: [el],
     },
   };
+  root = unitWork;
   requestIdleCallback(workLoop);
 }
 
+function commitFiber(fiber) {
+  mountElement(fiber.child);
+  root = null;
+}
+
+function mountElement(fiber) {
+  if (!fiber) return;
+  let parent = fiber.parent;
+  while (!parent.dom) {
+    parent = parent.parent;
+  }
+  if (fiber.dom) parent.dom.append(fiber.dom);
+  mountElement(fiber.child);
+  mountElement(fiber.subling);
+}
+
 let unitWork = null;
+let root = null;
 function workLoop(IdleDeadLine) {
   while (IdleDeadLine.timeRemaining() > 0 && unitWork) {
-    // do extra task
     unitWork = performWorkOfUnit(unitWork);
+  }
+  if (!unitWork && root !== null) {
+    commitFiber(root);
   }
   requestIdleCallback(workLoop);
 }
 
+// 把DOM树处理成子任务
+function performWorkOfUnit(fiber) {
+  const isFunctionComponent = typeof fiber.type === "function";
+  if (!isFunctionComponent) {
+    updateHostComponent(fiber);
+  } else {
+    updateFunctionComponent(fiber);
+  }
+  if (fiber.child) {
+    return fiber.child;
+  }
+  if (fiber.subling) {
+    return fiber.subling;
+  }
+  while (fiber.parent) {
+    if (fiber.parent.subling) return fiber.parent.subling;
+    fiber = fiber.parent;
+  }
+}
+function updateHostComponent(fiber) {
+  if (!fiber.dom) {
+    const dom = (fiber.dom = initElement(fiber));
+    addProps(dom, fiber.props);
+  }
+  const children = fiber.props.children;
+  convertTree2List(fiber, children);
+}
+
+function updateFunctionComponent(fiber) {
+  const children = [fiber.type(fiber.props)];
+  convertTree2List(fiber, children);
+}
+
 function initElement(fiber) {
-  return node.type === "TEXT_ELEMENT"
+  return fiber.type === "TEXT_ELEMENT"
     ? document.createTextNode("")
-    : document.createElement(node.type);
+    : document.createElement(fiber.type);
 }
 
 function addProps(dom, props) {
@@ -55,8 +110,7 @@ function addProps(dom, props) {
   });
 }
 
-function convertTree2List(fiber) {
-  const children = fiber.props.children;
+function convertTree2List(fiber, children) {
   let prevChild;
   children.forEach((child, index) => {
     const newWork = {
@@ -73,25 +127,6 @@ function convertTree2List(fiber) {
     }
     prevChild = newWork;
   });
-}
-
-function decideReturn(self, fiber) {
-  if (fiber.child) {
-    return fiber.child;
-  }
-  if (fiber.subling) {
-    return fiber.subling;
-  }
-}
-
-function performWorkOfUnit(fiber) {
-  if (!fiber.dom) {
-    const dom = (fiber.dom = initElement(fiber));
-    fiber.parent.dom.append(dom);
-    addProps(dom, fiber.props);
-  }
-  convertTree2List(fiber);
-  return decideReturn(null, fiber);
 }
 
 export default {
