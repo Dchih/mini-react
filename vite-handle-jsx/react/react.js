@@ -104,7 +104,10 @@ function initElement(fiber) {
 
 function addProps(dom, props) {
   Object.keys(props).forEach((key) => {
-    if (key !== "children") {
+    if (key.startsWith("on") > 0) {
+      const eventName = key.slice(2).toLowerCase();
+      dom.addEventListener(eventName, props[key]);
+    } else if (key !== "children") {
       dom[key] = props[key];
     }
   });

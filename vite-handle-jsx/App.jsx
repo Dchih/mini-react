@@ -8,7 +8,14 @@ function Wrapper() {
 }
 
 function AppWithJsx({ num }) {
-  return <div>AppWithJsx: {num}</div>;
+  function handleClick() {
+    console.log("clicked");
+  }
+  return (
+    <div>
+      AppWithJsx: {num} <button onClick={handleClick}>click</button>
+    </div>
+  );
 }
 
 // export const el = CReact.createElement("div", { id: "app" }, "app");
@@ -16,7 +23,6 @@ function AppWithJsx({ num }) {
 export const App = (
   <div>
     hi-mini-react
-    <AppWithJsx num={10}></AppWithJsx>
     <AppWithJsx num={10}></AppWithJsx>
   </div>
 );
