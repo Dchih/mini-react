@@ -6,14 +6,15 @@ import CReact from "./react/react.js";
 function Wrapper() {
   return <AppWithJsx></AppWithJsx>;
 }
-
+let count = 10;
+function handleClick() {
+  count++;
+  CReact.update();
+}
 function AppWithJsx({ num }) {
-  function handleClick() {
-    console.log("clicked");
-  }
   return (
     <div>
-      AppWithJsx: {num} <button onClick={handleClick}>click</button>
+      AppWithJsx: {count} <button onClick={handleClick}>click</button>
     </div>
   );
 }
