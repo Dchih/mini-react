@@ -36,9 +36,23 @@ function render(el, container) {
 }
 
 function commitFiber(fiber) {
+  deleteOldFibers.forEach(commitDeletion);
   mountElement(fiber.child);
   currentRoot = root;
   root = null;
+  deleteOldFibers = [];
+}
+
+function commitDeletion(fiber) {
+  let parent = fiber.parent;
+  while (!parent.dom) {
+    parent = parent.parent;
+  }
+  if (fiber.dom) {
+    parent.dom.removeChild(fiber.dom);
+  } else {
+    commitDeletion(fiber.child);
+  }
 }
 
 function mountElement(fiber) {
@@ -62,6 +76,7 @@ function mountElement(fiber) {
 let unitWork = null;
 let root = null;
 let currentRoot = null;
+let deleteOldFibers = [];
 function workLoop(IdleDeadLine) {
   while (IdleDeadLine.timeRemaining() > 0 && unitWork) {
     unitWork = performWorkOfUnit(unitWork);
@@ -91,6 +106,7 @@ function performWorkOfUnit(fiber) {
     fiber = fiber.parent;
   }
 }
+
 function updateHostComponent(fiber) {
   if (!fiber.dom) {
     const dom = (fiber.dom = initElement(fiber));
@@ -161,6 +177,9 @@ function reconcileChildren(fiber, children) {
         effectTag: "placement",
         alternate: null,
       };
+      if (oldFiber) {
+        deleteOldFibers.push(oldFiber);
+      }
     }
 
     if (oldFiber) {

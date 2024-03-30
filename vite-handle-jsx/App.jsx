@@ -6,15 +6,22 @@ import CReact from "./react/react.js";
 function Wrapper() {
   return <AppWithJsx></AppWithJsx>;
 }
-let count = 10;
-function handleClick() {
-  count++;
-  CReact.update();
-}
+
+let showBar = true;
 function AppWithJsx({ num }) {
+  const Foo = function Foo() {
+    return <div>Foo</div>;
+  };
+  const Bar = <p>Bar</p>;
+  function handleClick() {
+    showBar = !showBar;
+    CReact.update();
+  }
   return (
     <div>
-      AppWithJsx: {count} <button onClick={handleClick}>click</button>
+      {/* AppWithJsx: {showBar ? Bar : Foo} */}
+      AppWithJsx: {showBar ? Bar : <Foo></Foo>}
+      <button onClick={handleClick}>click</button>
     </div>
   );
 }
